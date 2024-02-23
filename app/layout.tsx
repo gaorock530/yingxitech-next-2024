@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import './setup.css'
 
 export const metadata: Metadata = {
-  title: "影袭科技|YingxiTech",
-  description: "yingxitech, 影袭科技, 影袭, 科技, AI, tech, Communication, shadowstrike",
+  title: "影袭网络|YingxiTech",
+  description: "yingxitech, 影袭网络, 影袭科技, 影袭, 科技, AI, tech, Communication, shadowstrike",
 };
 
 export default function RootLayout({

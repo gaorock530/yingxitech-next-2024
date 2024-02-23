@@ -1,5 +1,5 @@
 
-// import Image from 'next/image'
+import Image from 'next/image'
 import styles from './Home.module.css';
 // Import Swiper React components
 // import { Swiper, SwiperSlide } from 'swiper/react';
@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <header>
-        <img src="/favicon-32x32.png" alt="" />
+        <img src="/favicon-32x32.png" />
         <p>影袭科技</p>
       </header>
       <div className={styles.pageWrapper}>

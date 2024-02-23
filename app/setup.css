@@ -1,0 +1,139 @@
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+header {
+  position: fixed;
+  width: 100%;
+  height: 3rem;
+  top: 0;
+  left: 0;
+  background-color: rgb(16, 20, 24);
+  display: flex;
+  align-items: center;
+  z-index: 100;
+  padding: 0 1rem;
+  color: #fff;
+}
+
+header img {
+  height: 20px;
+  margin: 0 1rem;
+}
+
+.page-1-p {
+  color: #fff;
+  max-width: 600px;
+  text-align: left;
+  padding: 1rem 0;
+}
+
+form {
+  color: #fff;
+  width: 100%;
+  max-width: 600px;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 3rem 6rem;
+  border-radius: 1rem;
+}
+
+form h5 {
+  text-align: left;
+  padding: 1rem 0;
+}
+
+form input {
+  width: 100%;
+  height: 3rem;
+  margin-bottom: 1rem;
+  outline: none;
+  padding: 1em;
+  font-size: 1.2rem;
+}
+
+form textarea {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 1rem;
+  resize: none;
+  outline: none;
+  padding: 1em;
+  font-size: 1.1rem;
+}
+
+form button {
+  width: 100%;
+  height: 3rem;
+  font-size: 1.1rem;
+  background-color: #0078d4;
+  color: #fff;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 200px;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #aaa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+footer p span {
+  padding: 0 5px;
+}
+
+footer a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.swiper-container {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+  /* Center slide text vertically */
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+
+.swiper-pagination-bullet {
+  background-color: aqua !important;
+}

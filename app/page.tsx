@@ -16,7 +16,7 @@ export default function Home() {
     <main className={styles.main}>
       <header>
         <img src="/favicon-32x32.png" />
-        <p>影袭科技</p>
+        <p>影袭网络</p>
       </header>
       <div className={styles.pageWrapper}>
         <div className={styles.pageContent}>

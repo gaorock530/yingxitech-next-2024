@@ -150,6 +150,29 @@ footer a {
   padding: 1rem;
 }
 
-.consult button {
+
+.charge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.charge > * {
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  width: 200px;
+}
+
+.charge button {
   padding: 0.5rem 1rem;
 }
+
+.pay {
+  position: fixed;
+  width: 100svw;
+  height: 100svh;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+

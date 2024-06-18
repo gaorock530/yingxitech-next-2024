@@ -1,4 +1,5 @@
-import Image from "next/image";
+// import Image from "next/image";
+import Option from "./charge";
 import styles from "./Home.module.css";
 // Import Swiper React components
 // import { Swiper, SwiperSlide } from 'swiper/react';
@@ -46,7 +47,7 @@ export default function Home() {
             <p>
               承接各种网站应用、手机APP、微信支付宝小程序开发业务，和各种技术类合作，包括AI算法、大数据分析、区块链、加密算法等。
             </p>
-            <button>付费咨询</button>
+            <Option />
           </div>
           <footer>
             <p>

@@ -137,3 +137,19 @@ footer a {
 .swiper-pagination-bullet {
   background-color: aqua !important;
 }
+
+.consult {
+  position: absolute;
+  top: 30%;
+  width: 100%;
+  text-align: center;
+  color: white;
+}
+
+.consult p {
+  padding: 1rem;
+}
+
+.consult button {
+  padding: 0.5rem 1rem;
+}

@@ -23,7 +23,9 @@ export default function Option() {
     <div className="charge">
       <select onChange={onOptionChange} name="type">
         {service.map((op, idx) => (
-          <option value={idx}>{op}</option>
+          <option key={idx} value={idx}>
+            {op}
+          </option>
         ))}
       </select>
       <button onClick={onPay}>付费咨询</button>

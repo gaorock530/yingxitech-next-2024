@@ -1,3 +1,4 @@
+"use client"
 import * as React from "react";
 import style from "./Page.module.css";
 import Grid from "@mui/material/Grid";
@@ -11,36 +12,34 @@ const types = ["warn", "notice", "order", "register"];
 export default function CheckPage() {
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
+  const value = searchParams.get("value");
+
+  const [loading, setLoading] = React.useState(false)
+  const [data, setData] = React.useState<Record<string, any>>({})
 
   React.useEffect(() => {
-    if (!type || !types.includes(type)) return;
+    if (!value || !type || !types.includes(type)) return;
     (async function () {
       try {
-        const res = await serverRequest(`/auth/getOneNoticePage?type=${type}`);
+        setLoading(true)
+        const res = await serverRequest(`/auth/getOneNoticePage?type=${type}&value=${value}`);
         console.log(res);
+        if (!res) return
+        setData(res)
       } catch (e) {
         console.log(e);
       } finally {
+        setLoading(false)
       }
     })();
-  }, []);
+  }, [type, value]);
+
+  const RenderData = () => Object.keys(data).length > 0 ? Object.keys(data).map((key: string) => <p key={key}>{key}:{data[key]}</p>): <p>NO DATA</p>
 
   return (
     <div className={style.container}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Paper className={style.item}>item</Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <Paper className={style.item}>item</Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <Paper className={style.item}>item</Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <Paper className={style.item}>item</Paper>
-        </Grid>
-      </Grid>
+      <Paper className={style.item}>{type || 'NO TYPE'}</Paper>
+      <Paper className={style.item}>{loading? <CircularProgress />:<RenderData />}</Paper>
     </div>
   );
 }

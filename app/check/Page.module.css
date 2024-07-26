@@ -1,7 +1,10 @@
 .container {
   padding: 1rem;
+  background-color: #ccc;
+  min-height: 100vh;
 }
 
 .item {
   padding: 1rem;
+  margin: 0.5rem 0;
 }

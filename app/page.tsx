@@ -1,3 +1,4 @@
+'use client'
 // import Image from "next/image";
 import Option from "./charge";
 import styles from "./Home.module.css";

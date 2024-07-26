@@ -1,5 +1,6 @@
 type serverRequestOptions = {
   method?: "GET" | "POST" | "DELETE" | "PUT";
+  action?: {action: string, value: string}
   body?: any;
   last?: number;
   tags?: string[];
@@ -32,12 +33,14 @@ export default async function serverRequest(
       }
     }
 
-    const signRes = await serverRequest("/auth/getSign", {
-      method: "POST",
-      body: { action: "weixin", value: "notice" },
-    });
-    if (!signRes) throw Error("sign error");
-    headers["x-sign"] = signRes.sign;
+    if (opt?.action) {
+      const signRes = await serverRequest("/auth/getSign", {
+        method: "POST",
+        body: { action: "weixin", value: "notice" },
+      });
+      if (!signRes) throw Error("sign error");
+      headers["x-sign"] = signRes.sign;
+    }
 
     if (Object.keys.length > 0) options["headers"] = headers;
     if (opt?.tags && opt?.tags instanceof Array)

@@ -22,7 +22,7 @@ export default function CheckPage() {
     (async function () {
       try {
         setLoading(true)
-        const res = await serverRequest(`/auth/getOneNoticePage?type=${type}&value=${value}`);
+        const res = await serverRequest(`/auth/getOneNoticePage?type=${type}&value=${value}`, {action : {action: 'type', value: 'value'}});
         console.log(res);
         if (!res) return
         setData(res)

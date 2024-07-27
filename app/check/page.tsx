@@ -1,11 +1,12 @@
 "use client"
 import * as React from "react";
 import style from "./Page.module.css";
-import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useSearchParams } from "next/navigation";
 import serverRequest from "./request";
+
+
 
 const types = ["warn", "notice", "order", "register"];
 

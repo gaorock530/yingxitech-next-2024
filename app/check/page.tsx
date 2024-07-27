@@ -35,7 +35,7 @@ export default function CheckPage() {
     })();
   }, [type, value]);
 
-  const RenderData = () => Object.keys(data).length > 0 ? Object.keys(data).map((key: string) => <p key={key}><b>{key}:</b> <span>{data[key]}</span></p>): <p>NO DATA</p>
+  const RenderData = () => Object.keys(data).length > 0 ? Object.keys(data).map((key: string) => <p key={key}><b>{key}:</b> <span className={style.detail}>{data[key]}</span></p>): <p>NO DATA</p>
 
   return (
     <div className={style.container}>

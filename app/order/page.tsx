@@ -37,8 +37,9 @@ export default function OrderPage() {
         // console.log(res);
         // if (!res) return;
         // setData(res);
-      } catch (e) {
+      } catch (e: any) {
         console.log(e);
+        setResult(e.toString());
       } finally {
         setLoading(false);
       }

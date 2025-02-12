@@ -25,7 +25,7 @@ export default function OrderPage() {
       try {
         setLoading(true);
         const res = await fetch(
-          `https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxb02245b16056a2d2&redirect_uri=https%3A%2F%2Fapi.yingxitech.com%2Fauth%2FgetOpenidFromCodeRedirect&response_type=code&scope=snsapi_base&state=${orderId}#wechat_redirect`,
+          `https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe82604d9a68ca8cf&redirect_uri=https%3A%2F%2Fapi.yingxitech.com%2Fauth%2FgetOpenidFromCodeRedirect&response_type=code&scope=snsapi_base#wechat_redirect`,
           {
             mode: "no-cors",
           }

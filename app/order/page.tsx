@@ -10,7 +10,7 @@ const types = ["paid", "sent", "received", "done", "other"];
 
 export default function OrderPage() {
   const searchParams = useSearchParams();
-  const status = searchParams.get("status");
+  // const status = searchParams.get("status");
   const orderNo = searchParams.get("orderNo");
   const openid = searchParams.get("openid");
 
@@ -19,29 +19,33 @@ export default function OrderPage() {
   const [result, setResult] = React.useState<any>("no result");
 
   React.useEffect(() => {
-    if (!status || !orderNo || !types.includes(status) || !openid) {
+    if (!orderNo || !openid) {
       return;
     }
     (async function () {
       try {
         setLoading(true);
-        // const res = await fetch(
-        //   `https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe82604d9a68ca8cf&redirect_uri=https%3A%2F%2Fapi.yingxitech.com%2Fauth%2FgetOpenidFromCodeRedirect&response_type=code&scope=snsapi_base#wechat_redirect`,
-        //   {
-        //     mode: "no-cors",
-        //   }
-        // );
-        // const json = await res.json();
-        // console.log({ res });
-        // setResult(json);
+        const res = await fetch(
+          `https://api.yingxitech.com/order/findOneOrderByOrderNoAdmin`,
+          {
+            method: 'POST',
+            headers: {
+              'x-openid': openid
+            },
+            body: JSON.stringify({
+              orderNo: orderNo
+            })
+          }
+        );
+        const json = await res.json();
+        setResult(json);
       } catch (e: any) {
-        console.log(e);
         setResult(e.toString());
       } finally {
         setLoading(false);
       }
     })();
-  }, [status, orderNo, openid]);
+  }, [orderNo, openid]);
 
   const RenderData = () =>
     Object.keys(data).length > 0 ? (

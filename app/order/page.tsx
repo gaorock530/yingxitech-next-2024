@@ -10,7 +10,7 @@ const types = ["paid", "sent", "received", "done", "other"];
 
 export default function OrderPage() {
   const searchParams = useSearchParams();
-  // const status = searchParams.get("status");
+  const status = searchParams.get("status");
   const orderNo = searchParams.get("orderNo");
   const openid = searchParams.get("openid");
 
@@ -20,6 +20,7 @@ export default function OrderPage() {
 
   React.useEffect(() => {
     if (!orderNo || !openid) {
+      setResult('!orderNo || !openid');
       return;
     }
     (async function () {
@@ -30,6 +31,7 @@ export default function OrderPage() {
           {
             method: 'POST',
             headers: {
+              'content-type': 'application/json',
               'x-openid': openid
             },
             body: JSON.stringify({
@@ -71,7 +73,7 @@ export default function OrderPage() {
             ? `status: ${status.toUpperCase()}`
             : "NO Status"}
         </p>
-        <p>{orderNo ? `orderNo: ${orderNo}` : "NO orderId"}</p>
+        <p>{orderNo ? `orderNo: ${orderNo}` : "NO orderNo"}</p>
         <p>{openid ? `openid: ${openid}` : "NO openid"}</p>
       </Paper>
       <Paper className={style.item}>

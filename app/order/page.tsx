@@ -8,7 +8,14 @@ import { useSearchParams } from "next/navigation";
 // import serverRequest from "./request";
 
 const types = ["paid", "sent", "received", "done", "other"];
-const comps = ["顺丰", "申通", "中通", "圆通"];
+const comps = ["顺丰", "申通", "中通", "圆通", "菜鸟"];
+const dist: Record<string, string> = {
+  shentong: "申通",
+  yuantong: "圆通",
+  zhongtong: "中通",
+  danniao: "菜鸟",
+  shunfeng: "顺丰",
+};
 
 function formatDate(date: string) {
   return new Date(
@@ -62,11 +69,39 @@ async function getDeliveryDetail(no: string, openid: string) {
   }
 }
 
+async function getCompany(no: string, openid: string) {
+  try {
+    const company = localStorage.getItem(no);
+    if (!company) {
+      const companyRes = await fetch(
+        `https://api.yingxitech.com/auth/companySearch?no=${no}`,
+        {
+          headers: {
+            "x-openid": openid,
+          },
+        }
+      );
+      const companyJson = await companyRes.json();
+      if (!companyJson.company) return false;
+      localStorage.setItem(no, JSON.stringify(companyJson));
+      return companyJson;
+    } else {
+      return JSON.parse(company);
+    }
+  } catch (e) {
+    localStorage.removeItem(no);
+    return false;
+  }
+}
+
 export default function OrderPage() {
   const searchParams = useSearchParams();
   const status = searchParams.get("status");
   const orderNo = searchParams.get("orderNo");
   const openid = searchParams.get("openid") || "";
+
+  const timer = React.useRef<NodeJS.Timeout | null>(null);
+  const fetching = React.useRef(false);
 
   const [success, setSuccess] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
@@ -127,7 +162,25 @@ export default function OrderPage() {
   const onNumberChange = (e: any) => {
     const value = e.currentTarget.value;
     if (!value.match(/^[0-9A-Za-z]*$/)) return;
-    setDelivery({ comp: delivery.comp, error: false, no: value.toUpperCase() });
+    setDelivery({ ...delivery, no: value.toUpperCase() });
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(async () => {
+      if (fetching.current) return;
+      try {
+        fetching.current = true;
+        const res = await getCompany(value, openid);
+        if (res && res.company) {
+          setDelivery({
+            error: false,
+            comp: dist[res.company],
+            no: value.toUpperCase(),
+          });
+        }
+      } catch (e) {
+      } finally {
+        fetching.current = false;
+      }
+    }, 1000);
   };
 
   const onClick = async () => {
@@ -314,8 +367,8 @@ export default function OrderPage() {
         {data.deliveryDetail && (
           <Paper className={style.item}>
             <h3>发货进度</h3>
-            {data.deliveryDetail.context.map((step: any) => (
-              <li className={style.li} key={step.time}>
+            {data.deliveryDetail.context.map((step: any, index: number) => (
+              <li className={style.li} key={index}>
                 <h4>{formatDate(step.time)}</h4>
                 <p>{step.desc}</p>
               </li>

@@ -133,6 +133,14 @@ export default function OrderPage() {
   //     <p>NO DATA</p>
   //   );
 
+  const onCompChange = (e: any) => {
+    setDelivery({
+      comp: e.currentTarget.value || delivery.comp,
+      error: false,
+      no: delivery.no,
+    });
+  };
+
   const RenderOrder = () => {
     const item = data.items[0];
     return (
@@ -289,8 +297,9 @@ export default function OrderPage() {
           <li className={style.li}>
             <h4>快递公司</h4>
             <select
-              defaultValue={delivery.comp}
+              value={delivery.comp}
               disabled={loading || data.status !== "paid" || success}
+              onChange={onCompChange}
             >
               {comps.map((com) => (
                 <option value={com} key={com}>

@@ -4,13 +4,16 @@ import style from "./Page.module.css";
 import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useSearchParams } from "next/navigation";
+
 // import serverRequest from "./request";
 
 const types = ["paid", "sent", "received", "done", "other"];
 const comps = ["顺丰", "申通", "中通", "圆通"];
 
 function formatDate(date: string) {
-  return new Date(date).toLocaleString("zh-CN");
+  return new Date(
+    date.length === 10 ? Number(date + "000") : date
+  ).toLocaleString("zh-CN");
 }
 
 function formatPrice(weixinPrice: number) {
@@ -29,6 +32,33 @@ function formatStatus(status: string) {
       return "已结束";
     default:
       return "未知";
+  }
+}
+
+async function getDeliveryDetail(no: string, openid: string) {
+  try {
+    const detail = localStorage.getItem(no + "detail");
+    const expire = localStorage.getItem(no + "expire") || 0;
+    if (!detail || Date.now() - Number(expire) > 1000 * 60 * 60 * 12) {
+      const searchRes = await fetch(
+        `https://api.yingxitech.com/auth/postalSearch?no=${no}`,
+        {
+          headers: {
+            "x-openid": openid,
+          },
+        }
+      );
+      const searchJson = await searchRes.json();
+      localStorage.setItem(no + "detail", JSON.stringify(searchJson));
+      localStorage.setItem(no + "expire", Date.now().toString());
+      return searchJson;
+    } else {
+      return JSON.parse(detail);
+    }
+  } catch (e) {
+    localStorage.removeItem(no + "detail");
+    localStorage.removeItem(no + "expire");
+    return false;
   }
 }
 
@@ -70,7 +100,22 @@ export default function OrderPage() {
           }
         );
         const json = await res.json();
-        setData(json);
+
+        if (json.deliverNumber) {
+          const searchJson = await getDeliveryDetail(
+            json.deliverNumber,
+            openid
+          );
+          if (!searchJson) {
+            setError("发货信息获取失败，稍后重试");
+            setData(json);
+            return;
+          }
+          console.log({ searchJson });
+          setData({ ...json, deliveryDetail: searchJson });
+        } else {
+          setData(json);
+        }
       } catch (e: any) {
         setError(e.toString());
       } finally {
@@ -81,8 +126,8 @@ export default function OrderPage() {
 
   const onNumberChange = (e: any) => {
     const value = e.currentTarget.value;
-    if (!value.match(/^[0-9]*$/)) return;
-    setDelivery({ comp: delivery.comp, error: false, no: value });
+    if (!value.match(/^[0-9A-Za-z]*$/)) return;
+    setDelivery({ comp: delivery.comp, error: false, no: value.toUpperCase() });
   };
 
   const onClick = async () => {
@@ -252,10 +297,29 @@ export default function OrderPage() {
               <h4>发货单号</h4>
               <p>{data.deliverNumber}</p>
             </li>
-            <li className={style.li}>
-              <h4>发货进度</h4>
-              <p>{data.postCode}</p>
-            </li>
+            {data.deliveryDetail && (
+              <li className={style.li}>
+                <h4>服务商官网</h4>
+                <p>{data.deliveryDetail.officalService.url}</p>
+              </li>
+            )}
+            {data.deliveryDetail && (
+              <li className={style.li}>
+                <h4>服务商电话</h4>
+                <p>{data.deliveryDetail.officalService.servicePhone}</p>
+              </li>
+            )}
+          </Paper>
+        )}
+        {data.deliveryDetail && (
+          <Paper className={style.item}>
+            <h3>发货进度</h3>
+            {data.deliveryDetail.context.map((step: any) => (
+              <li className={style.li} key={step.time}>
+                <h4>{formatDate(step.time)}</h4>
+                <p>{step.desc}</p>
+              </li>
+            ))}
           </Paper>
         )}
       </>
@@ -312,8 +376,8 @@ export default function OrderPage() {
             <h4>快递单号</h4>
             <input
               className={delivery.error ? style.error : ""}
-              type="tel"
-              pattern="/^[0-9]*$/"
+              type="text"
+              pattern="/^[0-9A-Za-z]*$/"
               onChange={onNumberChange}
               value={delivery.no}
               disabled={loading || data.status !== "paid" || success}

@@ -268,6 +268,11 @@ export default function OrderPage() {
       {/* <Paper className={style.item}>
         {loading ? <CircularProgress /> : <RenderData />}
       </Paper> */}
+      {error && (
+        <Paper className={style.item}>
+          {error && typeof error === "object" ? JSON.stringify(error) : error}
+        </Paper>
+      )}
       {loading ? (
         <div className={style.center}>
           <CircularProgress />
@@ -278,11 +283,6 @@ export default function OrderPage() {
         <RenderOrder />
       )}
 
-      {/* {error && (
-        <Paper className={style.item}>
-          {error && typeof error === "object" ? JSON.stringify(error) : error}
-        </Paper>
-      )} */}
       {data.status === "paid" && !success && (
         <Paper className={style.item}>
           <h3>邮寄详情</h3>

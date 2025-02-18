@@ -10,19 +10,35 @@ const types = ["paid", "sent", "received", "done", "other"];
 const comps = ["顺丰", "申通", "中通", "圆通"];
 
 function formatDate(date: string) {
-  return new Date(date).toLocaleString("zh-CN", { timeZone: "UTC" });
+  return new Date(date).toLocaleString("zh-CN");
 }
 
 function formatPrice(weixinPrice: number) {
   return (weixinPrice / 100).toFixed(2) + "元";
 }
 
+function formatStatus(status: string) {
+  switch (status) {
+    case "paid":
+      return "已支付";
+    case "sent":
+      return "已发货";
+    case "received":
+      return "已收货";
+    case "received":
+      return "已结束";
+    default:
+      return "未知";
+  }
+}
+
 export default function OrderPage() {
   const searchParams = useSearchParams();
   const status = searchParams.get("status");
   const orderNo = searchParams.get("orderNo");
-  const openid = searchParams.get("openid");
+  const openid = searchParams.get("openid") || "";
 
+  const [success, setSuccess] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [data, setData] = React.useState<Record<string, any>>({});
   const [error, setError] = React.useState<any>(null);
@@ -69,11 +85,36 @@ export default function OrderPage() {
     setDelivery({ comp: delivery.comp, error: false, no: value });
   };
 
-  const onClick = () => {
-    if (error) return;
+  const onClick = async () => {
+    if (error || data.status !== "paid") return;
     if (!delivery.no)
       return setDelivery({ comp: delivery.comp, error: true, no: delivery.no });
-    setLoading(true);
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `https://api.yingxitech.com/order/sendOrderByOrderNo`,
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            "x-openid": openid,
+          },
+          body: JSON.stringify({
+            orderNo: orderNo,
+            deliverService: delivery.comp,
+            deliverNumber: delivery.no,
+          }),
+        }
+      );
+      const json = await res.json();
+      console.log(json);
+      if (json.success === true) setSuccess(true);
+      else setError("更改订单状态错误");
+    } catch (e: any) {
+      setError(e.toString());
+    } finally {
+      setLoading(false);
+    }
   };
 
   // const RenderData = () =>
@@ -98,6 +139,10 @@ export default function OrderPage() {
       <>
         <Paper className={style.item}>
           <h3>订单概况</h3>
+          <li className={style.li}>
+            <h4>订单状态</h4>
+            <p>{formatStatus(data.status)}</p>
+          </li>
           <li className={style.li}>
             <h4>订单号</h4>
             <p>{data.orderNo}</p>
@@ -184,6 +229,27 @@ export default function OrderPage() {
             <p>{data.postCode}</p>
           </li>
         </Paper>
+        {data.status !== "paid" && (
+          <Paper className={style.item}>
+            <h3>发货详情</h3>
+            <li className={style.li}>
+              <h4>发货时间</h4>
+              <p>{formatDate(data.sentDate)}</p>
+            </li>
+            <li className={style.li}>
+              <h4>服务商</h4>
+              <p>{data.deliverService}</p>
+            </li>
+            <li className={style.li}>
+              <h4>发货单号</h4>
+              <p>{data.deliverNumber}</p>
+            </li>
+            <li className={style.li}>
+              <h4>发货进度</h4>
+              <p>{data.postCode}</p>
+            </li>
+          </Paper>
+        )}
       </>
     );
   };
@@ -206,6 +272,8 @@ export default function OrderPage() {
         <div className={style.center}>
           <CircularProgress />
         </div>
+      ) : success ? (
+        <div className={style.center}>已成功发货</div>
       ) : (
         <RenderOrder />
       )}
@@ -215,37 +283,44 @@ export default function OrderPage() {
           {error && typeof error === "object" ? JSON.stringify(error) : error}
         </Paper>
       )} */}
-      <Paper className={style.item}>
-        <h3>邮寄详情</h3>
-        <li className={style.li}>
-          <h4>快递公司</h4>
-          <select defaultValue={delivery.comp} disabled={loading}>
-            {comps.map((com) => (
-              <option value={com} key={com}>
-                {com}
-              </option>
-            ))}
-          </select>
-        </li>
-        <li className={style.li}>
-          <h4>快递单号</h4>
-          <input
-            className={delivery.error ? style.error : ""}
-            type="tel"
-            pattern="/^[0-9]*$/"
-            onChange={onNumberChange}
-            value={delivery.no}
-            disabled={loading}
-          />
-        </li>
-        <button
-          onClick={onClick}
-          type="button"
-          disabled={delivery.error || loading}
-        >
-          {loading ? "请稍等" : "确认发货"}
-        </button>
-      </Paper>
+      {data.status === "paid" && !success && (
+        <Paper className={style.item}>
+          <h3>邮寄详情</h3>
+          <li className={style.li}>
+            <h4>快递公司</h4>
+            <select
+              defaultValue={delivery.comp}
+              disabled={loading || data.status !== "paid" || success}
+            >
+              {comps.map((com) => (
+                <option value={com} key={com}>
+                  {com}
+                </option>
+              ))}
+            </select>
+          </li>
+          <li className={style.li}>
+            <h4>快递单号</h4>
+            <input
+              className={delivery.error ? style.error : ""}
+              type="tel"
+              pattern="/^[0-9]*$/"
+              onChange={onNumberChange}
+              value={delivery.no}
+              disabled={loading || data.status !== "paid" || success}
+            />
+          </li>
+          <button
+            onClick={onClick}
+            type="button"
+            disabled={
+              delivery.error || loading || data.status !== "paid" || success
+            }
+          >
+            {loading ? "请稍等" : "确认发货"}
+          </button>
+        </Paper>
+      )}
     </div>
   );
 }

@@ -118,7 +118,7 @@ export default function OrderPage() {
 
   React.useEffect(() => {
     if (!isWeixin()) return setError("请先登录授权");
-    if (!orderNo || !openid) return setError("!orderNo || !openid");
+    if (!orderNo || !openid) return setError("缺少关键信息");
     (async function () {
       try {
         setLoading(true);
@@ -337,7 +337,7 @@ export default function OrderPage() {
             <p>{data.postCode}</p>
           </li>
         </Paper>
-        {data.status !== "paid" && (
+        {data.status !== "paid" && data?.deliveryDetail?.officalService && (
           <Paper className={style.item}>
             <h3>发货详情</h3>
             <li className={style.li}>
@@ -366,7 +366,7 @@ export default function OrderPage() {
             )}
           </Paper>
         )}
-        {data.deliveryDetail && (
+        {data.deliveryDetail && data.deliveryDetail.context && (
           <Paper className={style.item}>
             <h3>发货进度</h3>
             {data.deliveryDetail.context.map((step: any, index: number) => (

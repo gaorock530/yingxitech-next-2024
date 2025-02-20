@@ -4,6 +4,7 @@ import style from "./Page.module.css";
 import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useSearchParams } from "next/navigation";
+import isWeixin from "../utils/weixin";
 
 // import serverRequest from "./request";
 
@@ -18,6 +19,7 @@ const dist: Record<string, string> = {
 };
 
 function formatDate(date: string) {
+  if (!date) return
   return new Date(
     date.length === 10 ? Number(date + "000") : date
   ).toLocaleString("zh-CN");
@@ -95,6 +97,7 @@ async function getCompany(no: string, openid: string) {
 }
 
 export default function OrderPage() {
+  
   const searchParams = useSearchParams();
   const status = searchParams.get("status");
   const orderNo = searchParams.get("orderNo");
@@ -104,7 +107,7 @@ export default function OrderPage() {
   const fetching = React.useRef(false);
 
   const [success, setSuccess] = React.useState(false);
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState<Record<string, any>>({});
   const [error, setError] = React.useState<any>(null);
   const [delivery, setDelivery] = React.useState({
@@ -114,10 +117,8 @@ export default function OrderPage() {
   });
 
   React.useEffect(() => {
-    if (!orderNo || !openid) {
-      setError("!orderNo || !openid");
-      return;
-    }
+    if (!isWeixin()) return setError("请先登录授权");
+    if (!orderNo || !openid) return setError("!orderNo || !openid");
     (async function () {
       try {
         setLoading(true);
@@ -240,8 +241,9 @@ export default function OrderPage() {
   };
 
   const RenderOrder = () => {
-    const item = data.items[0];
-    return (
+    const item = data?.items? data?.items[0] : false;
+
+    return !item?'':(
       <>
         <Paper className={style.item}>
           <h3>订单概况</h3>
@@ -405,10 +407,10 @@ export default function OrderPage() {
       ) : success ? (
         <div className={style.center}>已成功发货</div>
       ) : (
-        <RenderOrder />
+        error? '': <RenderOrder />
       )}
 
-      {data.status === "paid" && !success && (
+      {!error && data.status === "paid" && !success && (
         <Paper className={style.item}>
           <h3>邮寄详情</h3>
           <li className={style.li}>

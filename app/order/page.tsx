@@ -19,7 +19,7 @@ const dist: Record<string, string> = {
 };
 
 function formatDate(date: string) {
-  if (!date) return
+  if (!date) return;
   return new Date(
     date.length === 10 ? Number(date + "000") : date
   ).toLocaleString("zh-CN");
@@ -58,6 +58,7 @@ async function getDeliveryDetail(no: string, openid: string) {
         }
       );
       const searchJson = await searchRes.json();
+      // console.log({ searchJson });
       localStorage.setItem(no + "detail", JSON.stringify(searchJson));
       localStorage.setItem(no + "expire", Date.now().toString());
       return searchJson;
@@ -97,7 +98,6 @@ async function getCompany(no: string, openid: string) {
 }
 
 export default function OrderPage() {
-  
   const searchParams = useSearchParams();
   const status = searchParams.get("status");
   const orderNo = searchParams.get("orderNo");
@@ -117,7 +117,7 @@ export default function OrderPage() {
   });
 
   React.useEffect(() => {
-    if (!isWeixin()) return setError("请先登录授权");
+    if (!isWeixin()) return setError("缺少授权环境");
     if (!orderNo || !openid) return setError("缺少关键信息");
     (async function () {
       try {
@@ -147,7 +147,7 @@ export default function OrderPage() {
             setData(json);
             return;
           }
-          console.log({ searchJson });
+          // console.log({ searchJson });
           setData({ ...json, deliveryDetail: searchJson });
         } else {
           setData(json);
@@ -241,9 +241,11 @@ export default function OrderPage() {
   };
 
   const RenderOrder = () => {
-    const item = data?.items? data?.items[0] : false;
+    const item = data?.items ? data?.items[0] : false;
 
-    return !item?'':(
+    return !item ? (
+      ""
+    ) : (
       <>
         <Paper className={style.item}>
           <h3>订单概况</h3>
@@ -406,8 +408,10 @@ export default function OrderPage() {
         </div>
       ) : success ? (
         <div className={style.center}>已成功发货</div>
+      ) : error ? (
+        ""
       ) : (
-        error? '': <RenderOrder />
+        <RenderOrder />
       )}
 
       {!error && data.status === "paid" && !success && (

@@ -5,6 +5,7 @@ import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useSearchParams } from "next/navigation";
 import isWeixin from "../utils/weixin";
+// import Image from 'next/image'
 
 // import serverRequest from "./request";
 
@@ -117,7 +118,7 @@ export default function OrderPage() {
   });
 
   React.useEffect(() => {
-    if (!isWeixin()) return setError("缺少授权环境");
+    // if (!isWeixin()) return setError("缺少授权环境");
     if (!orderNo || !openid) return setError("缺少关键信息");
     (async function () {
       try {
@@ -137,21 +138,22 @@ export default function OrderPage() {
         );
         const json = await res.json();
 
-        if (json.deliverNumber) {
-          const searchJson = await getDeliveryDetail(
-            json.deliverNumber,
-            openid
-          );
-          if (!searchJson) {
-            setError("发货信息获取失败，稍后重试");
-            setData(json);
-            return;
-          }
-          // console.log({ searchJson });
-          setData({ ...json, deliveryDetail: searchJson });
-        } else {
-          setData(json);
-        }
+        // if (json.deliverNumber) {
+        //   const searchJson = await getDeliveryDetail(
+        //     json.deliverNumber,
+        //     openid
+        //   );
+        //   if (!searchJson) {
+        //     setError("发货信息获取失败，稍后重试");
+        //     setData(json);
+        //     return;
+        //   }
+        //   // console.log({ searchJson });
+        //   setData({ ...json, deliveryDetail: searchJson });
+        // } else {
+        //   setData(json);
+        // }
+        setData(json);
       } catch (e: any) {
         setError(e.toString());
       } finally {
@@ -339,7 +341,7 @@ export default function OrderPage() {
             <p>{data.postCode}</p>
           </li>
         </Paper>
-        {data.status !== "paid" && data?.deliveryDetail?.officalService && (
+        {data.status !== "paid" && (
           <Paper className={style.item}>
             <h3>发货详情</h3>
             <li className={style.li}>
@@ -368,7 +370,7 @@ export default function OrderPage() {
             )}
           </Paper>
         )}
-        {data.deliveryDetail && data.deliveryDetail.context && (
+        {/* {data.deliveryDetail && data.deliveryDetail.context && (
           <Paper className={style.item}>
             <h3>发货进度</h3>
             {data.deliveryDetail.context.map((step: any, index: number) => (
@@ -378,7 +380,7 @@ export default function OrderPage() {
               </li>
             ))}
           </Paper>
-        )}
+        )} */}
       </>
     );
   };

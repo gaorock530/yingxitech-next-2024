@@ -23,10 +23,10 @@ export default function OrdersPage() {
   const [error, setError] = React.useState<any>(null);
 
   React.useEffect(() => {
-    if (!isWeixin()) return setError("缺少授权环境");
-    if (!openid) return setError("缺少关键信息");
     (async function () {
       try {
+        if (!isWeixin()) return setError("缺少授权环境");
+        if (!openid) return setError("缺少关键信息");
         setLoading(true);
         const res = await fetch(
           `https://api.yingxitech.com/order/listOrdersAdmin`,

@@ -110,7 +110,7 @@ export default function OrderPage() {
   const fetching = React.useRef(false);
 
   const [success, setSuccess] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
   const [data, setData] = React.useState<Record<string, any>>({});
   const [error, setError] = React.useState<any>(null);
   const [delivery, setDelivery] = React.useState({
@@ -120,10 +120,10 @@ export default function OrderPage() {
   });
 
   React.useEffect(() => {
-    if (!isWeixin()) return setError("缺少授权环境");
-    if (!orderNo || !openid) return setError("缺少关键信息");
     (async function () {
       try {
+        if (!isWeixin()) return setError("缺少授权环境");
+        if (!orderNo || !openid) return setError("缺少关键信息");
         setLoading(true);
         const res = await fetch(
           `https://api.yingxitech.com/order/findOneOrderByOrderNoAdmin`,
@@ -394,9 +394,11 @@ export default function OrderPage() {
 
   return (
     <div className={style.container}>
-      <button className={style.checkoutButton} onClick={checkoutAll}>
-        查看所有未发货订单
-      </button>
+      {!error && !loading && (
+        <button className={style.checkoutButton} onClick={checkoutAll}>
+          查看所有未发货订单
+        </button>
+      )}
       {/* <Paper className={style.item}>
         <p>
           {status && types.includes(status)

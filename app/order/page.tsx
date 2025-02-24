@@ -5,6 +5,7 @@ import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useSearchParams } from "next/navigation";
 import isWeixin from "../utils/weixin";
+import { useRouter } from "next/navigation";
 // import Image from 'next/image'
 
 // import serverRequest from "./request";
@@ -99,6 +100,7 @@ async function getCompany(no: string, openid: string) {
 }
 
 export default function OrderPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const status = searchParams.get("status");
   const orderNo = searchParams.get("orderNo");
@@ -118,7 +120,7 @@ export default function OrderPage() {
   });
 
   React.useEffect(() => {
-    // if (!isWeixin()) return setError("缺少授权环境");
+    if (!isWeixin()) return setError("缺少授权环境");
     if (!orderNo || !openid) return setError("缺少关键信息");
     (async function () {
       try {
@@ -240,6 +242,11 @@ export default function OrderPage() {
       error: false,
       no: delivery.no,
     });
+  };
+
+  const checkoutAll = () => {
+    console.log("checkoutAll");
+    router.push("/orders?openid=" + openid);
   };
 
   const RenderOrder = () => {
@@ -387,6 +394,9 @@ export default function OrderPage() {
 
   return (
     <div className={style.container}>
+      <button className={style.checkoutButton} onClick={checkoutAll}>
+        查看所有未发货订单
+      </button>
       {/* <Paper className={style.item}>
         <p>
           {status && types.includes(status)

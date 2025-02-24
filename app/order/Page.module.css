@@ -1,7 +1,15 @@
 .container {
   padding: 1rem;
-  background-color: #ccc;
+  background-color: #eee;
   min-height: 100vh;
+}
+
+.checkoutButton {
+  width: 100%;
+  padding: 0.5rem 0;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, SF UI Text, Helvetica Neue, PingFang SC, Hiragino Sans GB, Microsoft YaHei UI, Microsoft YaHei, Arial, sans-serif;
 }
 
 .center {
